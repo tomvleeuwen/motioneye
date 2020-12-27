@@ -104,7 +104,7 @@ def pretty_date_time(date_time, tzinfo=None, short=False):
             tz += '-'
             offset = -offset
 
-        tz += '%.2d' % (offset / 3600) + ':%.2d' % ((offset % 3600) / 60)
+        tz += '%.2d' % (offset // 3600) + ':%.2d' % ((offset % 3600) // 60)
 
         text += ' (' + tz + ')'
 
@@ -130,8 +130,8 @@ def pretty_time(time):
         return ''
 
     if isinstance(time, datetime.timedelta):
-        hour = time.seconds / 3600
-        minute = (time.seconds % 3600) / 60
+        hour = time.seconds // 3600
+        minute = (time.seconds % 3600) // 60
         time = datetime.time(hour, minute)
 
     return '{hm}'.format(
@@ -419,7 +419,7 @@ def test_mjpeg_url(data, auth_modes, allow_jpeg, callback):
             # check for the status header
             m = re.match('^http/1.(\d) (\d+) ', header)
             if m:
-                if int(m.group(2)) / 100 == 2:
+                if int(m.group(2)) // 100 == 2:
                     status_2xx[0] = True
 
                 if m.group(1) == '1':
@@ -861,10 +861,10 @@ def build_editable_mask_file(camera_id, mask_class, mask_lines, capture_width=No
     else:
         rx = 0
 
-    rw = width / nx  # rectangle width
+    rw = width // nx  # rectangle width
 
     # vertical rectangles
-    ny = mask_height = height * MASK_WIDTH / width  # number of rectangles
+    ny = mask_height = height * MASK_WIDTH // width  # number of rectangles
     if height % ny:
         ny -= 1
         ry = height % ny  # remainder
@@ -882,9 +882,9 @@ def build_editable_mask_file(camera_id, mask_class, mask_lines, capture_width=No
         line_index_func = lambda y: y
 
     else:
-        line_index_func = lambda y: (len(mask_lines) - 1) * y / ny
+        line_index_func = lambda y: (len(mask_lines) - 1) * y // ny
 
-    rh = height / ny  # rectangle height
+    rh = height // ny  # rectangle height
 
     # draw the actual mask image content
     im = Image.new('L', (width, height), 255)  # all white
@@ -972,10 +972,10 @@ def parse_editable_mask_file(camera_id, mask_class, capture_width=None, capture_
     else:
         rx = 0
 
-    rw = width / nx  # rectangle width
+    rw = width // nx  # rectangle width
 
     # vertical rectangles
-    ny = height * MASK_WIDTH / width  # number of rectangles
+    ny = height * MASK_WIDTH // width  # number of rectangles
     if height % ny:
         ny -= 1
         ry = height % ny  # remainder
@@ -983,7 +983,7 @@ def parse_editable_mask_file(camera_id, mask_class, capture_width=None, capture_
     else:
         ry = 0
 
-    rh = height / ny  # rectangle height
+    rh = height // ny  # rectangle height
 
     # parse the image contents and build the mask lines
     mask_lines = [width, height]
@@ -996,7 +996,7 @@ def parse_editable_mask_file(camera_id, mask_class, capture_width=None, capture_
             bits.append(not bool(pixel))
 
         if rx:
-            px = int(nx * rw + rx / 2)
+            px = int(nx * rw + rx // 2)
             py = int((y + 0.5) * rh)
             pixel = pixels[py * width + px]
             bits.append(not bool(pixel))
@@ -1013,13 +1013,13 @@ def parse_editable_mask_file(camera_id, mask_class, capture_width=None, capture_
         bits = []
         for x in range(nx):
             px = int((x + 0.5) * rw)
-            py = int(ny * rh + ry / 2)
+            py = int(ny * rh + ry // 2)
             pixel = pixels[py * width + px]
             bits.append(not bool(pixel))
 
         if rx:
-            px = int(nx * rw + rx / 2)
-            py = int(ny * rh + ry / 2)
+            px = int(nx * rw + rx // 2)
+            py = int(ny * rh + ry // 2)
             pixel = pixels[py * width + px]
             bits.append(not bool(pixel))
 
