@@ -24,11 +24,9 @@ import smtplib
 import socket
 import time
 
-from email import Encoders
-from email.mime.text import MIMEText
-from email.MIMEMultipart import MIMEMultipart
-from email.MIMEBase import MIMEBase
-from email.Utils import formatdate
+from email.message import EmailMessage
+from email.policy import SMTP
+from email.utils import localtime
 
 from tornado.ioloop import IOLoop
 
@@ -57,27 +55,22 @@ def send_mail(server, port, account, password, tls, _from, to, subject, message,
     if account and password:
         conn.login(account, password)
     
-    email = MIMEMultipart()
+    email = EmailMessage()
     email['Subject'] = subject
     email['From'] = _from
     email['To'] = ', '.join(to)
-    email['Date'] = formatdate(localtime=True)
-    email.attach(MIMEText(message))
-    
+    email['Date'] = localtime()
+    email.set_content(message)
+   
     for name in reversed(files):
-        part = MIMEBase('image', 'jpeg')
         with open(name, 'rb') as f:
-            part.set_payload(f.read())
-        
-        Encoders.encode_base64(part)
-        part.add_header('Content-Disposition', 'attachment; filename="%s"' % os.path.basename(name))
-        email.attach(part)
+            email.add_attachment(f.read(), maintype='image', subtype='jpeg', filename=name)
     
     if files:
         logging.debug('attached %d pictures' % len(files))
 
     logging.debug('sending email message')
-    conn.sendmail(_from, to, email.as_string())
+    conn.sendmail(_from, to, email.as_bytes(policy=SMTP))
     conn.quit()
 
 
