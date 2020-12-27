@@ -60,8 +60,8 @@ def _get_os_version_uname():
 
 
 def compare_versions(version1, version2):
-    version1 = re.sub('[^0-9.]', '', version1)
-    version2 = re.sub('[^0-9.]', '', version2)
+    version1 = re.sub(b'[^0-9.]', '', version1)
+    version2 = re.sub(b'[^0-9.]', '', version2)
     
     def int_or_0(n):
         try:
@@ -70,8 +70,8 @@ def compare_versions(version1, version2):
         except:
             return 0
 
-    version1 = [int_or_0(n) for n in version1.split('.')]
-    version2 = [int_or_0(n) for n in version2.split('.')]
+    version1 = [int_or_0(n) for n in version1.split(b'.')]
+    version2 = [int_or_0(n) for n in version2.split(b'.')]
     
     len1 = len(version1)
     len2 = len(version2)

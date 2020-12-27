@@ -678,12 +678,12 @@ def compute_signature(method, path, body, key):
     path = _SIGNATURE_REGEX.sub('-', path)
     key = _SIGNATURE_REGEX.sub('-', key)
 
-    if body and body.startswith('---'):
+    if body and body.startswith(b'---'):
         body = None  # file attachment
 
     body = body and _SIGNATURE_REGEX.sub('-', body.decode('utf8'))
 
-    return hashlib.sha1('%s:%s:%s:%s' % (method, path, body or '', key)).hexdigest().lower()
+    return hashlib.sha1(('%s:%s:%s:%s' % (method, path, body or '', key)).encode('utf-8')).hexdigest().lower()
 
 
 def parse_cookies(cookies_headers):

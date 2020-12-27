@@ -127,8 +127,8 @@ class BaseHandler(RequestHandler):
         admin_password = main_config.get('@admin_password')
         normal_password = main_config.get('@normal_password')
 
-        admin_hash = hashlib.sha1(main_config['@admin_password']).hexdigest()
-        normal_hash = hashlib.sha1(main_config['@normal_password']).hexdigest()
+        admin_hash = hashlib.sha1(main_config['@admin_password'].encode('utf-8')).hexdigest()
+        normal_hash = hashlib.sha1(main_config['@normal_password'].encode('utf-8')).hexdigest()
 
         if settings.HTTP_BASIC_AUTH and 'Authorization' in self.request.headers:
             up = utils.parse_basic_header(self.request.headers['Authorization'])
@@ -237,7 +237,7 @@ class MainHandler(BaseHandler):
         self.render('main.html',
                     frame=False,
                     motion_version=motion_info[1] if motion_info else '(none)',
-                    os_version=' '.join(os_version),
+                    os_version=b' '.join(os_version),
                     enable_update=settings.ENABLE_UPDATE,
                     enable_reboot=settings.ENABLE_REBOOT,
                     add_remove_cameras=settings.ADD_REMOVE_CAMERAS,

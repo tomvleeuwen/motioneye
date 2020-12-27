@@ -58,12 +58,12 @@ def find_motion():
             return None, None
 
     try:
-        help = subprocess.check_output(binary + ' -h || true', shell=True)
+        help = subprocess.check_output(binary + b' -h || true', shell=True)
 
     except subprocess.CalledProcessError:  # not found
         return None, None
 
-    result = re.findall('motion Version ([^,]+)', help, re.IGNORECASE)
+    result = re.findall(b'motion Version ([^,]+)', help, re.IGNORECASE)
     version = result and result[0] or ''
 
     logging.debug('using motion version %s' % version)
@@ -228,7 +228,7 @@ def get_motion_detection(camera_id, callback):
         if response.error:
             return callback(error=utils.pretty_http_error(response))
 
-        enabled = bool(response.body.lower().count('active'))
+        enabled = bool(response.body.lower().count(b'active'))
 
         logging.debug('motion detection is %(what)s for camera with id %(id)s' % {
                 'what': ['disabled', 'enabled'][enabled],
@@ -355,7 +355,7 @@ def is_motion_pre42():
     if not binary:
         return False
 
-    return update.compare_versions(version, '4.2') < 0
+    return update.compare_versions(version, b'4.2') < 0
 
 
 def has_h264_omx_support():
