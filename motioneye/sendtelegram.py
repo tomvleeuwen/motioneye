@@ -24,8 +24,8 @@ import re
 import signal
 import socket
 import time
-import urllib
-import urllib2
+import urllib.request, urllib.parse, urllib.error
+import urllib.request, urllib.error, urllib.parse
 import pycurl
 import random
 import codecs
@@ -36,12 +36,12 @@ import json
 
 from tornado.ioloop import IOLoop
 
-import settings
+from . import settings
 
-import config
-import mediafiles
-import motionctl
-import tzctl
+from . import config
+from . import mediafiles
+from . import motionctl
+from . import tzctl
 
 messages = {
     'motion_start': 'Motion has been detected by camera "%(camera)s/%(hostname)s" at %(moment)s (%(timezone)s).'
@@ -138,7 +138,7 @@ def parse_options(parser, args):
     
 
 def main(parser, args):
-    import meyectl
+    from . import meyectl
     
     # the motion daemon overrides SIGCHLD,
     # so we must restore it here,
@@ -154,7 +154,7 @@ def main(parser, args):
         args[7] = 'motionEye on %s <%s>' % (socket.gethostname(), args[8].split(',')[0])
 
     options = parse_options(parser, args)
-    print options 
+    print(options) 
     meyectl.configure_logging('telegram', options.log_to_file)
 
     logging.debug('hello!')
@@ -170,7 +170,7 @@ def main(parser, args):
     
     def on_message(message, files):
         try:
-            print message
+            print(message)
             logging.info('sending telegram')
             send_message(options.api, options.chatid, message, files or [])
             logging.info('telegram sent')
